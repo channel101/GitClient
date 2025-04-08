@@ -1,6 +1,6 @@
-# Plugin Template for Xed-Editor
+# Git plugin for Xed-Editor
 
-This project serves as a template for creating plugins for **Xed-Editor (Karbon)**.
+This is plugin for **Xed-Editor (Karbon)**.
 
 ## Setup
 
@@ -18,7 +18,7 @@ mkdir -p sdk
 
 ### 2. Download the SDK
 
-1. Download the latest **`sdk.jar`** from the [GitHub actions](https://github.com/Xed-Editor/Xed-Editor-Sdk/actions).  
+1. Download the latest `sdk.jar.zip` from the [GitHub actions](https://github.com/Xed-Editor/Xed-Editor-Sdk/actions).  
 
    **Note**: If certain APIs or Classes are not available in your plugin then just update the SDK jar. 
 
