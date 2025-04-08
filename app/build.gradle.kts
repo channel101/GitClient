@@ -63,8 +63,6 @@ dependencies {
     compileOnly(libs.ui.graphics)
     compileOnly(libs.material3)
     compileOnly(libs.navigation.compose)
-    compileOnly(libs.terminal.view)
-    compileOnly(libs.terminal.emulator)
     compileOnly(libs.utilcode)
     compileOnly(libs.coil.compose)
     //compileOnly(libs.org.eclipse.jgit)
