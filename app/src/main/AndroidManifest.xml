@@ -16,6 +16,16 @@
         <!-- provide the absolute path of the class that extends ExtensionAPI -->
         <meta-data android:name="mainClass" android:value="com.rk.xed_editor_plugin_demo.Main" />
 
+        <!-- minimum version code of xed-editor this plugin can be installed on  -->
+        <meta-data
+            android:name="minXedVersionCode"
+            android:value="47" />
+
+        <!-- version code of xed-editor that the sdk.jar is made from  -->
+        <meta-data
+            android:name="targetXedVersionCode"
+            android:value="47" />
+
     </application>
 
 </manifest>
