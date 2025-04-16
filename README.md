@@ -11,7 +11,7 @@ Follow these steps to set up the repository and build your plugin:
 Start by cloning this repository and navigating into its directory:
 
 ```bash
-git clone https://github.com/Xed-Editor/pluginTemplate
+git clone https://github.com/Xed-Editor/GitClient
 cd pluginTemplate
 mkdir -p sdk
 ```
