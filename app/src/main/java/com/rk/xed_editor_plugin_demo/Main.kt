@@ -9,17 +9,11 @@ import com.rk.extension.*
 import com.rk.libcommons.toast
 
 class Main : ExtensionAPI() {
-    var init = false
-
     override fun onPluginLoaded(extension: Extension) {
 
     }
 
     override fun onMainActivityCreated() {
-        if (init){
-            return
-        }
-
         //add git setting screen
         Hooks.Settings.screens["git"] = SettingsScreen(
             label = "Git",
@@ -52,8 +46,6 @@ class Main : ExtensionAPI() {
         Hooks.ControlPanel.controlItems["log"] = ControlItem(label = "Logs", description = "GitClient",  hideControlPanelOnClick = true, sideEffect = {
             toast("Not Implemented")
         })
-
-        init = true
     }
 
     override fun onMainActivityPaused() {
