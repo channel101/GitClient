@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.rk.xed_editor_plugin_demo"
+    namespace = "com.rk.git"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.rk.xed_editor_plugin_demo"
+        applicationId = "com.rk.git"
         minSdk = 26
         targetSdk = 35
         versionCode = 1

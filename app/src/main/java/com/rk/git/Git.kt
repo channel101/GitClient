@@ -1,10 +1,13 @@
-package com.rk.xed_editor_plugin_demo
+package com.rk.git
 
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.rk.compose.filetree.projects
 import com.rk.file_wrapper.FileWrapper
 import com.rk.libcommons.LoadingPopup
 import com.rk.libcommons.askInput
+import com.rk.libcommons.child
+import com.rk.libcommons.errorDialog
 import com.rk.libcommons.toast
 import com.rk.xededitor.MainActivity.MainActivity
 import com.rk.xededitor.MainActivity.tabs.editor.EditorFragment
@@ -14,15 +17,15 @@ import kotlinx.coroutines.withContext
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
 import java.io.File
+import java.net.URI
 
-val commit:(Boolean)-> Unit = { askForMessage ->
+
+val commit:(Boolean,(Boolean)-> Unit)-> Unit = { askForMessage, callBack ->
     val context = MainActivity.activityRef.get()!!
     val currentFile = context?.adapter?.getCurrentFragment()?.fragment!!
 
     if (currentFile is EditorFragment && currentFile.file is FileWrapper){
         context.lifecycleScope.launch(Dispatchers.Main){
-
-
             val root = findGitRoot((currentFile.file as FileWrapper).file)
 
             if (root != null){
@@ -51,6 +54,7 @@ val commit:(Boolean)-> Unit = { askForMessage ->
 
                                     }
                                 }.call()
+                                callBack.invoke(true)
                             }
                         }.onFailure {
                             withContext(Dispatchers.Main){
@@ -61,6 +65,7 @@ val commit:(Boolean)-> Unit = { askForMessage ->
                                     show()
                                 }
                             }
+                            callBack.invoke(false)
                         }
                         loading.hide()
                     }
@@ -96,8 +101,7 @@ val push = {
 
     if (currentFile is EditorFragment && currentFile.file is FileWrapper){
         context.lifecycleScope.launch(Dispatchers.Main){
-            val loading = LoadingPopup(ctx = context,hideAfterMillis = null)
-            loading.show()
+            val loading = withContext(Dispatchers.Main){LoadingPopup(context).show()}
 
             val root = findGitRoot((currentFile.file as FileWrapper).file)
 
@@ -106,6 +110,7 @@ val push = {
                     runCatching {
                         Git.open(root).use { git ->
                             git.push().apply {
+                                setProgressMonitor(ProgressIndicator(loading))
                                 val config = loadGitConfig(context)
                                 val username = config.first
                                 val passwd = getToken(context)
@@ -153,8 +158,7 @@ val pull = {
 
     if (currentFile is EditorFragment && currentFile.file is FileWrapper){
         context.lifecycleScope.launch(Dispatchers.Main){
-            val loading = LoadingPopup(ctx = context,hideAfterMillis = null)
-            loading.show()
+            val loading = withContext(Dispatchers.Main){LoadingPopup(context).show()}
 
             val root = findGitRoot((currentFile.file as FileWrapper).file)
 
@@ -163,6 +167,7 @@ val pull = {
                     runCatching {
                         Git.open(root).use { git ->
                             git.pull().apply {
+                                setProgressMonitor(ProgressIndicator(loading))
                                 val config = loadGitConfig(context)
                                 val username = config.first
                                 val passwd = getToken(context)
@@ -201,6 +206,46 @@ val pull = {
     }else{
         toast("Unsupported file type only native files are supported")
 
+    }
+
+}
+
+val clone:(String, FileWrapper)-> Unit = { repoUrl,file ->
+    val context = MainActivity.activityRef.get()!!
+
+
+    context.lifecycleScope.launch(Dispatchers.IO){
+        val loading = withContext(Dispatchers.Main){LoadingPopup(context).show()}
+        runCatching {
+            val repoName = repoUrl.substringAfterLast("/").removeSuffix(".git")
+            Git.cloneRepository()
+                .setURI(repoUrl)
+                .setCloneAllBranches(true)
+                .setCloneSubmodules(true)
+                .setDirectory(file.file.child(repoName))
+                .setProgressMonitor(ProgressIndicator(loading))
+                .apply {
+                    val config = loadGitConfig(context)
+                    val username = config.first
+                    val passwd = getToken(context)
+
+                    if (username.isNotEmpty() && passwd.isNotEmpty()) {
+                        setCredentialsProvider(
+                            UsernamePasswordCredentialsProvider(
+                                username, passwd
+                            )
+                        )
+                    }
+                }.call().also { Git.open(file.file.child(repoName)).use { git ->
+                    git.fetch().setCheckFetchedObjects(true).call()
+                } }
+        }.onFailure {
+            errorDialog(it)
+        }
+
+        withContext(Dispatchers.Main){
+            loading.hide()
+        }
     }
 
 }

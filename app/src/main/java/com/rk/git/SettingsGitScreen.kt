@@ -1,4 +1,4 @@
-package com.rk.xed_editor_plugin_demo
+package com.rk.git
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -17,13 +17,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import com.rk.libcommons.alpineHomeDir
 import com.rk.libcommons.child
 import com.rk.libcommons.createFileIfNot
 import com.rk.libcommons.toast
 import com.rk.libcommons.toastCatching
-import com.rk.resources.getString
 import com.rk.settings.Settings
 import com.rk.xededitor.ui.components.InputDialog
 import com.rk.xededitor.ui.components.SettingsToggle
